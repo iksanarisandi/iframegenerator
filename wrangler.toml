@@ -1,0 +1,14 @@
+name = "slug-generator-api"
+main = "workers/api.ts"
+compatibility_date = "2024-01-01"
+
+# KV Namespace untuk menyimpan slug mappings
+kv_namespaces = [
+  { binding = "SLUG_KV", id = "af7c451a6e2d4e25a497c9e7ea27f67b", preview_id = "d010668e9cbb44fb8fcecdbf9c4015d2" }
+]
+
+# Routes configuration
+# Uncomment dan sesuaikan dengan domain Anda
+# routes = [
+#   { pattern = "yourdomain.com/api/*", zone_name = "yourdomain.com" }
+# ]
