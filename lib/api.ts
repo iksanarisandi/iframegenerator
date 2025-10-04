@@ -42,7 +42,7 @@ export async function createSlug(data: CreateSlugRequest): Promise<CreateSlugRes
   });
 
   if (!response.ok) {
-    const error = await response.json();
+    const error = await response.json() as { error?: string };
     throw new ApiError(response.status, error.error || 'Failed to create slug');
   }
 
@@ -58,7 +58,7 @@ export async function getSlugData(slug: string): Promise<SlugData> {
   });
 
   if (!response.ok) {
-    const error = await response.json();
+    const error = await response.json() as { error?: string };
     throw new ApiError(response.status, error.error || 'Slug not found');
   }
 
