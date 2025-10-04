@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Standard config untuk Cloudflare Pages
+  // Standard config - will be handled by Cloudflare Pages
 };
 
 export default nextConfig;
