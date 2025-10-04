@@ -7,9 +7,6 @@ kv_namespaces = [
   { binding = "SLUG_KV", id = "af7c451a6e2d4e25a497c9e7ea27f67b", preview_id = "d010668e9cbb44fb8fcecdbf9c4015d2" }
 ]
 
-# Cloudflare Pages build output (for Next.js static export)
-pages_build_output_dir = "out"
-
 # Routes configuration
 # Uncomment dan sesuaikan dengan domain Anda
 # routes = [

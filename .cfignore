@@ -1,0 +1,3 @@
+# Ignore Worker config when building Pages
+wrangler.toml
+workers/
