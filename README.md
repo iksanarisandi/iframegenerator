@@ -1,6 +1,6 @@
 # 🔗 Slug Generator - Apps Script URL Shortener
 
-Aplikasi web minimalis untuk generate custom URL pendek untuk Google Apps Script Web Apps Anda. Dibangun dengan **Next.js**, **TypeScript**, **TailwindCSS**, dan **Cloudflare** (Workers + KV + Pages).
+Aplikasi web minimalis untuk generate custom URL pendek untuk Google Apps Script Web Apps Anda. Dibangun dengan **Cloudflare Workers**, **TypeScript**, **TailwindCSS**, dan **Cloudflare KV** untuk penyimpanan data.
 
 ## ✨ Fitur
 
@@ -10,6 +10,7 @@ Aplikasi web minimalis untuk generate custom URL pendek untuk Google Apps Script
 - ⚡ **Fast & Secure** - Powered by Cloudflare Edge Network
 - 🎨 **Apps Script Theme** - Warna aksen Google Apps Script (#4285F4, #34A853, #FBBC05)
 - 🖼️ **Iframe Viewer** - Full-screen responsive iframe untuk tampilkan web app
+- 🚀 **Single Worker Deploy** - Frontend, API, dan viewer dalam satu Cloudflare Worker
 
 ## 🚀 Quick Start
 
@@ -18,14 +19,22 @@ Aplikasi web minimalis untuk generate custom URL pendek untuk Google Apps Script
 - Node.js 18+ dan npm
 - Akun Cloudflare (free tier cukup)
 - Wrangler CLI: `npm install -g wrangler`
+- Git (untuk version control)
 
-### 1. Install Dependencies
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/iksanarisandi/iframegenerator.git
+cd slug-generator
+```
+
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 2. Setup Cloudflare KV
+### 3. Setup Cloudflare KV
 
 Buat KV namespace untuk menyimpan slug mappings:
 
@@ -40,7 +49,13 @@ wrangler kv:namespace create "SLUG_KV"
 wrangler kv:namespace create "SLUG_KV" --preview
 ```
 
-Output akan memberikan ID namespace. Copy ID tersebut dan update di `wrangler.toml`:
+Output akan memberikan ID namespace. Copy ID tersebut dan buat file `wrangler.toml` dari template:
+
+```bash
+cp wrangler.toml.example wrangler.toml
+```
+
+Edit `wrangler.toml` dan update dengan ID Anda:
 
 ```toml
 kv_namespaces = [
@@ -48,71 +63,51 @@ kv_namespaces = [
 ]
 ```
 
-### 3. Environment Variables
-
-Copy `.env.example` ke `.env.local`:
-
-```bash
-cp .env.example .env.local
-```
-
-Update URL Worker sesuai deployment Anda:
-
-```env
-NEXT_PUBLIC_WORKER_URL=https://your-worker.your-subdomain.workers.dev
-```
+> ⚠️ **PENTING**: File `wrangler.toml` sudah ada di `.gitignore` agar ID KV Anda tidak terpush ke GitHub.
 
 ### 4. Development
 
-#### A. Jalankan Cloudflare Worker (Terminal 1)
-
-```bash
-npm run worker:dev
-```
-
-Worker akan berjalan di `http://localhost:8787`
-
-#### B. Jalankan Next.js (Terminal 2)
+Jalankan Worker secara lokal:
 
 ```bash
 npm run dev
 ```
 
-Frontend akan berjalan di `http://localhost:3000`
+Worker akan berjalan di `http://localhost:8787` dengan hot-reload otomatis.
 
 ## 📦 Deployment
 
-### Deploy Cloudflare Worker
+### Deploy ke Cloudflare Workers
+
+Pastikan `wrangler.toml` sudah dikonfigurasi dengan benar, lalu deploy:
 
 ```bash
-npm run worker:deploy
+npm run deploy
 ```
 
-Setelah deploy, copy URL Worker yang diberikan dan update di environment variables production Anda.
-
-### Deploy Cloudflare Pages
-
-Ada dua cara:
-
-#### Option 1: Via Wrangler CLI
-
-```bash
-npm run pages:deploy
+Worker akan otomatis di-deploy ke URL:
+```
+https://slug-generator.YOUR_SUBDOMAIN.workers.dev
 ```
 
-#### Option 2: Via Dashboard (Recommended untuk CI/CD)
+### Custom Domain (Opsional)
 
-1. Push repository ke GitHub
-2. Buka [Cloudflare Dashboard](https://dash.cloudflare.com) → Pages
-3. Klik "Create a project" → "Connect to Git"
-4. Pilih repository Anda
-5. Set build configuration:
-   - **Framework preset**: Next.js
-   - **Build command**: `npm run build`
-   - **Build output directory**: `.next`
-6. Tambahkan environment variable:
-   - `NEXT_PUBLIC_WORKER_URL` = URL Worker Anda
-7. Deploy!
+Untuk menggunakan domain sendiri:
+
+1. Buka [Cloudflare Dashboard](https://dash.cloudflare.com)
+2. Pilih Worker Anda → **Triggers** → **Custom Domains**
+3. Klik **Add Custom Domain** dan masukkan domain/subdomain Anda
+4. Tunggu DNS propagasi (biasanya 1-5 menit)
+
+Atau tambahkan di `wrangler.toml`:
+
+```toml
+routes = [
+  { pattern = "slug.yourdomain.com/*", custom_domain = true }
+]
+```
+
+Lalu redeploy.
 
 ## 🎯 Cara Menggunakan
 
@@ -138,37 +133,24 @@ Aplikasi akan menampilkan iframe full-screen dari URL Apps Script yang sudah did
 
 ```
 slug-generator/
-├── app/
-│   ├── [slug]/                 # Dynamic route untuk iframe viewer
-│   │   ├── page.tsx           # Slug viewer page (SSR)
-│   │   └── not-found.tsx      # Custom 404 page
-│   ├── layout.tsx             # Root layout
-│   ├── page.tsx               # Home page dengan form
-│   └── globals.css            # Global styles
-├── components/
-│   └── SlugForm.tsx           # Form component untuk generate slug
-├── lib/
-│   └── api.ts                 # API client untuk komunikasi dengan Worker
-├── workers/
-│   └── api.ts                 # Cloudflare Worker API
-├── .cloudflare/
-│   └── pages.json             # Cloudflare Pages config
-├── wrangler.toml              # Wrangler config untuk Worker
-└── README.md
+├── src/
+│   └── index.ts               # Main Worker code (frontend + API + viewer)
+├── wrangler.toml.example      # Template konfigurasi (commit ke Git)
+├── wrangler.toml              # Konfigurasi aktual (di .gitignore)
+├── package.json               # Dependencies dan scripts
+├── tsconfig.json              # TypeScript config
+├── .gitignore                 # Git ignore rules
+└── README.md                  # Dokumentasi ini
 ```
 
 ## 🛠️ Tech Stack
 
-### Frontend
-- **Next.js 15** - React framework dengan App Router
+### All-in-One Cloudflare Worker
+- **Cloudflare Workers** - Edge runtime untuk frontend + API + viewer
 - **TypeScript** - Type-safe development
-- **TailwindCSS** - Utility-first CSS framework
-- **Inter Font** - Modern, clean typography
-
-### Backend & Storage
-- **Cloudflare Workers** - Serverless API endpoints
+- **TailwindCSS** - Inline utility-first CSS
 - **Cloudflare KV** - Key-value storage untuk slug mappings
-- **Cloudflare Pages** - Static site hosting dengan Edge rendering
+- **Modern HTML/CSS** - Responsive, clean UI tanpa framework frontend
 
 ## 🎨 Design System
 
@@ -191,6 +173,7 @@ slug-generator/
 - URL validation (harus dari `script.google.com`)
 - CORS headers sudah dikonfigurasi
 - Rate limiting (dapat ditambahkan via Cloudflare Dashboard)
+- **IMPORTANT**: `wrangler.toml` tidak di-commit ke Git (berisi KV namespace ID)
 
 ## 📊 API Endpoints
 
@@ -209,7 +192,6 @@ Buat slug baru.
 **Response:**
 ```json
 {
-  "success": true,
   "slug": "my-app",
   "url": "https://yourdomain.com/my-app"
 }
@@ -224,29 +206,40 @@ Ambil data URL berdasarkan slug.
 {
   "name": "My App",
   "url": "https://script.google.com/macros/s/...",
-  "createdAt": "2025-10-04T02:00:00.000Z"
+  "createdAt": "2025-01-20T..."
 }
 ```
+
+### GET `/:slug`
+
+Tampilkan iframe viewer untuk slug tertentu. Jika slug tidak ditemukan, tampilkan halaman 404.
 
 ## 🐛 Troubleshooting
 
 ### Worker not found
-- Pastikan Worker sudah di-deploy: `npm run worker:deploy`
-- Update `NEXT_PUBLIC_WORKER_URL` di environment variables
+- Pastikan Worker sudah di-deploy: `npm run deploy`
+- Cek URL deployment di output terminal
 
 ### KV namespace error
-- Pastikan KV namespace sudah dibuat
-- Cek ID di `wrangler.toml` sudah benar
+- Pastikan KV namespace sudah dibuat dengan `wrangler kv:namespace create`
+- Cek ID di `wrangler.toml` sudah benar (production dan preview)
 
-### CORS issues
-- Pastikan Worker API mengembalikan CORS headers
-- Check browser console untuk error details
+### Iframe tidak muncul / X-Frame-Options error
+- Pastikan Google Apps Script deployment diset ke "Anyone" access
+- Tambahkan `.setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)` di Apps Script
+- Gunakan URL deployment (`.../exec`), bukan dev URL (`.../dev`)
+
+### Slug sudah ada tapi tidak muncul
+- Cek Cloudflare KV Dashboard apakah data tersimpan
+- Tunggu beberapa detik untuk KV propagation (biasanya instant)
 
 ## 📝 Development Tips
 
-1. **Testing Worker Locally**: Gunakan `wrangler dev` untuk test Worker di local
+1. **Testing Worker Locally**: Gunakan `npm run dev` atau `wrangler dev` untuk test Worker di local
 2. **Testing KV Operations**: Gunakan `wrangler kv:key put` untuk manual testing
-3. **Debugging**: Check Cloudflare Dashboard → Workers → Logs untuk production errors
+3. **Debugging Production**: Check Cloudflare Dashboard → Workers → [worker-name] → Logs untuk real-time error logs
+4. **Backup `wrangler.toml`**: Simpan copy lokal di tempat aman (jangan commit ke Git public)
+5. **Testing iframe**: Pastikan Apps Script deployment sudah benar sebelum membuat slug
 
 ## 🤝 Contributing
 

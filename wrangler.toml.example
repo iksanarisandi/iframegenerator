@@ -1,0 +1,15 @@
+name = "slug-generator"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# KV Namespace untuk menyimpan slug mappings
+# Ganti dengan KV namespace ID Anda sendiri setelah dibuat
+kv_namespaces = [
+  { binding = "SLUG_KV", id = "your_kv_namespace_id", preview_id = "your_preview_kv_namespace_id" }
+]
+
+# Routes configuration
+# Uncomment dan sesuaikan dengan domain Anda
+# routes = [
+#   { pattern = "slug.yourdomain.com/*", custom_domain = true }
+# ]
