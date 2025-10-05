@@ -51,6 +51,7 @@ function getHomepageHTML(): string {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Slug Generator - Apps Script URL Shortener</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2317d0a6;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2318beaa;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Cpath d='M35 55 L25 65 Q20 70 20 75 Q20 80 25 85 L30 90 Q35 95 40 95 Q45 95 50 90 L60 80' stroke='white' stroke-width='8' fill='none' stroke-linecap='round'/%3E%3Cpath d='M65 45 L75 35 Q80 30 80 25 Q80 20 75 15 L70 10 Q65 5 60 5 Q55 5 50 10 L40 20' stroke='white' stroke-width='8' fill='none' stroke-linecap='round'/%3E%3Cpath d='M40 60 L60 40' stroke='white' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E" />
   <style>
     * {
       margin: 0;
@@ -322,10 +323,27 @@ function getHomepageHTML(): string {
     .footer a {
       color: #4285F4;
       text-decoration: none;
+      transition: color 0.2s;
     }
     
     .footer a:hover {
-      text-decoration: underline;
+      color: #34A853;
+    }
+    
+    .footer .heart {
+      color: #dc2626;
+      display: inline-block;
+      animation: heartbeat 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.1); }
+    }
+    
+    .footer .author {
+      margin-top: 12px;
+      font-weight: 500;
     }
   </style>
 </head>
@@ -396,7 +414,8 @@ function getHomepageHTML(): string {
     </div>
     
     <div class="footer">
-      <p>Powered by <a href="https://workers.cloudflare.com" target="_blank">Cloudflare Workers</a> & <a href="https://developers.google.com/apps-script" target="_blank">Google Apps Script</a></p>
+      <p>Powered by <a href="https://workers.cloudflare.com" target="_blank" rel="noopener">Cloudflare Workers</a> & <a href="https://developers.google.com/apps-script" target="_blank" rel="noopener">Google Apps Script</a></p>
+      <p class="author">Dibuat dengan <span class="heart">❤️</span> oleh <a href="https://iksanarisandi.com" target="_blank" rel="noopener">Iksan Arisandi</a></p>
     </div>
   </div>
   
@@ -513,6 +532,7 @@ function get404HTML(): string {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Slug Tidak Ditemukan</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2317d0a6;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2318beaa;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Cpath d='M35 55 L25 65 Q20 70 20 75 Q20 80 25 85 L30 90 Q35 95 40 95 Q45 95 50 90 L60 80' stroke='white' stroke-width='8' fill='none' stroke-linecap='round'/%3E%3Cpath d='M65 45 L75 35 Q80 30 80 25 Q80 20 75 15 L70 10 Q65 5 60 5 Q55 5 50 10 L40 20' stroke='white' stroke-width='8' fill='none' stroke-linecap='round'/%3E%3Cpath d='M40 60 L60 40' stroke='white' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E" />
   <style>
     * {
       margin: 0;
@@ -525,6 +545,7 @@ function get404HTML(): string {
       background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 20px;
@@ -590,6 +611,34 @@ function get404HTML(): string {
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(66, 133, 244, 0.3);
     }
+    
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      color: #6b7280;
+      font-size: 13px;
+    }
+    
+    .footer a {
+      color: #4285F4;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .footer a:hover {
+      color: #34A853;
+    }
+    
+    .footer .heart {
+      color: #dc2626;
+      display: inline-block;
+      animation: heartbeat 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.1); }
+    }
   </style>
 </head>
 <body>
@@ -608,6 +657,10 @@ function get404HTML(): string {
         </svg>
         Kembali ke Home
       </a>
+    </div>
+    
+    <div class="footer">
+      <p>Dibuat dengan <span class="heart">❤️</span> oleh <a href="https://iksanarisandi.com" target="_blank" rel="noopener">Iksan Arisandi</a></p>
     </div>
   </div>
 </body>

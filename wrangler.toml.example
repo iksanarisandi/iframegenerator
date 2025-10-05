@@ -9,7 +9,6 @@ kv_namespaces = [
 ]
 
 # Routes configuration
-# Uncomment dan sesuaikan dengan domain Anda
-# routes = [
-#   { pattern = "slug.yourdomain.com/*", custom_domain = true }
-# ]
+# PENTING: Custom domain harus dikonfigurasi melalui Cloudflare Dashboard
+# Dashboard > Workers > [worker-name] > Triggers > Custom Domains > Add Custom Domain
+# Jangan gunakan routes config untuk custom domain karena tidak support wildcard
